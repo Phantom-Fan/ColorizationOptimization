@@ -20,7 +20,7 @@ def cartesian(arrays, out=None):
     out[:,0] = np.repeat(arrays[0], m)
     if arrays[1:]:
         cartesian(arrays[1:], out=out[0:m,1:])
-        for j in xrange(1, arrays[0].size):
+        for j in range(1, arrays[0].size):
             out[j*m:(j+1)*m,1:] = out[0:m,1:]
     return out
 
@@ -59,8 +59,8 @@ def find_neighbor(position_matrix, r):
 
 def generate_std2_matrix(Y):
     res = np.zeros(Y.shape, dtype='float32')
-    for i in xrange(Y.shape[0]):
-        for j in xrange(Y.shape[1]):
+    for i in range(Y.shape[0]):
+        for j in range(Y.shape[1]):
             res[i, j] = np.square(np.std(find_neighbor(Y, [i, j])))
     return res
 
@@ -72,14 +72,14 @@ def calc_weight(r, S, Y, std2):
 
 def generate_weight_matrix(Y):
     (height, width) = Y.shape[0:2]
-    cart = cartesian([xrange(height), xrange(width)])
+    cart = cartesian([range(height), range(width)])
     cart_r = cart.reshape(height, width, 2) # cart_r[i, j] is [i, j]
     size = height * width
     xy2idx = np.arange(size).reshape(height, width) # linear rank of [i, j]
     W = sparse.lil_matrix((size, size)) # sparse matrix map (h, w) -> (h, w)
     std2_matrix = generate_std2_matrix(Y) # std2 matrix (h, w)
-    for i in xrange(height):
-        for j in xrange(width):
+    for i in range(height):
+        for j in range(width):
             current_index = xy2idx[i, j]
             neighbors = find_neighbor(cart_r, [i, j]).reshape(-1, 2)
             neighbors = [tuple(item) for item in neighbors] # list of [i, j] of current point
@@ -96,9 +96,9 @@ def main(arguments):
     parser = argparse.ArgumentParser(
         description=__doc__,
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('--input', help='Specify the name of the black and white picture.', type=str, default='input')
-    parser.add_argument('--marked', help='Specify the name of the marked picture', type=str, default='marked')
-    parser.add_argument('--output', help='Specify the output name you want.', type=str, default='my_output')
+    parser.add_argument('--input', help='Specify the name of the black and white picture.', type=str, default='example')
+    parser.add_argument('--marked', help='Specify the name of the marked picture', type=str, default='example_marked')
+    parser.add_argument('--output', help='Specify the output name you want.', type=str, default='cahl_output')
 
     args = parser.parse_args(arguments)
     bw_name = args.input
